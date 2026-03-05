@@ -1,1 +1,2 @@
 # NLP-Project
+## A Legal document will be given as the input and the summary of that legal document will be given as an output and the project also offers a system that answers queries regarding the given legal document
