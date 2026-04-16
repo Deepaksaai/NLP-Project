@@ -1,0 +1,8 @@
+{
+  "outcome_preservation_rate": 1.0,
+  "outcome_inversion_rate": 0.0,
+  "n_total": 500,
+  "n_with_known_outcome": 3,
+  "n_correct": 3,
+  "n_inverted": 0
+}

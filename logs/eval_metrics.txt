@@ -1,0 +1,122 @@
+nohup: ignoring input
+Loading saved outputs...
+  500 generated, 500 references, 500 sources
+
+Running metrics: ['rouge', 'bertscore', 'faithfulness', 'entity_coverage', 'outcome', 'length']
+
+============================================================
+  Metric: rouge
+============================================================
+Computing ROUGE...
+  Saved evaluation/report/rouge_scores.json
+
+============================================================
+  Metric: bertscore
+============================================================
+Computing BERTScore...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/772 [00:00<?, ?it/s]Loading weights: 100%|██████████| 772/772 [00:00<00:00, 102145.20it/s]
+[1mDebertaModel LOAD REPORT[0m from: microsoft/deberta-xlarge-mnli
+Key                 | Status     |  | 
+--------------------+------------+--+-
+pooler.dense.weight | UNEXPECTED |  | 
+classifier.bias     | UNEXPECTED |  | 
+pooler.dense.bias   | UNEXPECTED |  | 
+classifier.weight   | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+calculating scores...
+computing bert embedding.
+  0%|          | 0/125 [00:00<?, ?it/s]  0%|          | 0/125 [00:00<?, ?it/s]
+  ERROR: int too big to convert
+  Saved evaluation/report/bertscore_scores.json
+
+============================================================
+  Metric: faithfulness
+============================================================
+Computing faithfulness (NLI)...
+Loading weights:   0%|          | 0/202 [00:00<?, ?it/s]Loading weights: 100%|██████████| 202/202 [00:00<00:00, 24268.84it/s]
+[1mDebertaV2ForSequenceClassification LOAD REPORT[0m from: cross-encoder/nli-deberta-v3-base
+Key                             | Status     |  | 
+--------------------------------+------------+--+-
+deberta.embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+  Saved evaluation/report/faithfulness_scores.json
+
+============================================================
+  Metric: entity_coverage
+============================================================
+Computing entity coverage (spaCy NER)...
+  en_core_web_trf not found, falling back to en_core_web_sm
+  Saved evaluation/report/entity_coverage_scores.json
+
+============================================================
+  Metric: outcome
+============================================================
+Computing outcome preservation...
+  Saved evaluation/report/outcome_scores.json
+
+============================================================
+  Metric: length
+============================================================
+Computing length analysis...
+  Saved evaluation/report/length_scores.json
+
+Finding flagged examples...
+  17 flagged
+
+============================================================
+SUMMARY REPORT
+============================================================
+  stage                          : stage3_best
+  test_examples                  : 500
+  rouge1_precision               : 0.6467
+  rouge1_recall                  : 0.2941
+  rouge1_f1                      : 0.3625
+  rouge2_precision               : 0.3649
+  rouge2_recall                  : 0.1603
+  rouge2_f1                      : 0.1986
+  rougeL_precision               : 0.4940
+  rougeL_recall                  : 0.2220
+  rougeL_f1                      : 0.2732
+  mean_faithfulness              : 0.1343
+  median_faithfulness            : 0.0000
+  hallucination_rate             : 0.0640
+  contradiction_sentence_rate    : 0.0544
+  overall_entity_coverage        : 0.1004
+  gpe_coverage                   : 0.1301
+  law_coverage                   : 0.0487
+  org_coverage                   : 0.0991
+  person_coverage                : 0.0155
+  date_coverage                  : 0.1243
+  outcome_preservation_rate      : 1.0000
+  outcome_inversion_rate         : 0.0000
+  mean_summary_words             : 66.7500
+  std_summary_words              : 24.8515
+  median_summary_words           : 63.0000
+  mean_summary_sentences         : 1.5080
+  mean_compression_ratio         : 0.0577
+  min_summary_words              : 18
+  max_summary_words              : 113
+
+============================================================
+TARGET CHECK
+============================================================
+  rouge1_f1                      : 0.3625  [PASS]  target > 0.3-0.45
+  rouge2_f1                      : 0.1986  [PASS]  target > 0.1-0.2
+  rougeL_f1                      : 0.2732  [PASS]  target > 0.25-0.4
+  mean_faithfulness              : 0.1343  [FAIL]  target > 0.75-1.0
+  hallucination_rate             : 0.0640  [PASS]  target < 0.0-0.15
+  overall_entity_coverage        : 0.1004  [FAIL]  target > 0.6-1.0
+  person_coverage                : 0.0155  [FAIL]  target > 0.7-1.0
+  outcome_preservation_rate      : 1.0000  [PASS]  target > 0.7-1.0
+  outcome_inversion_rate         : 0.0000  [PASS]  target < 0.0-0.05
+  mean_summary_words             : 66.7500  [FAIL]  target range 100-300
+
+============================================================
+Full report: evaluation/report/summary_report.json
+============================================================

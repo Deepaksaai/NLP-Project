@@ -1,0 +1,20 @@
+[
+  {
+    "dataset": "arxiv",
+    "papers": 202479,
+    "total_chunks": 1544237,
+    "aligned_chunks": 1501124,
+    "filtered_chunks": 43113,
+    "coverage_pct": 97.2,
+    "second_pass_examples": 200376
+  },
+  {
+    "dataset": "pubmed",
+    "papers": 116641,
+    "total_chunks": 786072,
+    "aligned_chunks": 777318,
+    "filtered_chunks": 8754,
+    "coverage_pct": 98.9,
+    "second_pass_examples": 115361
+  }
+]

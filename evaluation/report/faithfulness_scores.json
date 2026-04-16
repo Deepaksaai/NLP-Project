@@ -1,0 +1,8 @@
+{
+  "mean_faithfulness": 0.1353333333333333,
+  "median_faithfulness": 0.0,
+  "hallucination_rate": 0.076,
+  "contradiction_sentence_rate": 0.05902383654937571,
+  "n_summaries": 500,
+  "n_total_sentences": 881
+}

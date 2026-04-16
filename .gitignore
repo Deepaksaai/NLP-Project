@@ -1,0 +1,33 @@
+# Model checkpoints (too large for GitHub — 390MB each)
+checkpoints/*.pt
+
+# Large dataset files (2GB+ each)
+datasets/multilexsum/sources_*.json
+
+# Preprocessed aligned data (generated, not source)
+data/stage2_aligned/*.jsonl
+data/stage3_aligned/*.jsonl
+
+# Evaluation outputs (large JSON with full documents)
+evaluation/source_documents.json
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Byte-compiled
+*.egg-info/
+*.egg
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs (optional — you may want to keep these in git for your report)
+# Uncomment below if you don't want logs in git:
+# logs/*.txt

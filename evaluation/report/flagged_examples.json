@@ -1,0 +1,34 @@
+[
+  {
+    "test_id": "bs_61",
+    "issues": [
+      "too_short:23w"
+    ],
+    "generated": "RCAF-RA F-Americans Congressional Gold Medal Act - Directs the Secretary of Veterans Affairs (VA) to establish a program for aircrew training. Authorizes appropriations.",
+    "reference": "RCAF/RAF-Americans Congressional Gold Medal Act This bill directs the Speaker of the House of Representatives and the President pro tempore of the Senate to arrange for the award of a Congressional Gold Medal in commemoration of all U.S. nationals who joined the Royal Canadian Air Force or the Royal"
+  },
+  {
+    "test_id": "bs_167",
+    "issues": [
+      "too_short:27w"
+    ],
+    "generated": "Amends the Endangered Species Act of 1973 to require the Secretary of the Interior to publish the complaint in a readily accessible manner, including electronically accessible manner.",
+    "reference": "Amends the Endangered Species Act of 1973 to require the Secretary of the Interior, within 30 days after being served with a complaint in an action alleging a failure to perform an act or duty related to an endangered species or threatened species determination, to publish the complaint. Prohibits t"
+  },
+  {
+    "test_id": "bs_184",
+    "issues": [
+      "too_short:27w"
+    ],
+    "generated": "International Development Act of 1994 - Directs the United States Governor of the Bank to contribute $400,000 on behalf of the U.S. to the Global Environment Facility.",
+    "reference": "International Development Act of 1994 - Amends the Bretton Woods Agreements Act to authorize the U.S.  Governor of the World Bank to contribute a specified amount to the Global Environment Facility. \nAmends the African Development Fund Act to authorize the U.S. Governor of the African Development Fu"
+  },
+  {
+    "test_id": "bs_329",
+    "issues": [
+      "too_short:28w"
+    ],
+    "generated": "African Development Foundation Act of 2006 - Directs the Office of Management and Budget (OMB) to be a fully effective agency after assessing its program performance. Authorizes appropriations.",
+    "reference": "African Development Foundation Act of 2006 - Amends the the African Development Foundation Act to redesignate the African Development Foundation as the United States African Development Foundation.\n\nSpecifies that small enterprises, producer associations, and cooperatives are eligible for Foundation"
+  }
+]

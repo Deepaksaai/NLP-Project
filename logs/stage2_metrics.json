@@ -1,0 +1,41 @@
+[
+  {
+    "epoch": 1,
+    "train_loss": 4.26071082940499,
+    "val_loss": 4.599365773673256,
+    "perplexity": 99.42124007406274,
+    "lr": 9.665737535551561e-05,
+    "grad_norm": 1.435646414756775,
+    "patience": 0,
+    "chunk_loss": 5.204819383049011,
+    "second_pass_loss": 1.962666964608431,
+    "anchor_loss": 4.6205876964569095,
+    "sample": "we consider the case of regularized kernel based methods over a reproducing kernel hilbert space @xmath0 , see e.g. @xmath1 for some @xmath2 which is a smoothness penalty , see e.g. @xmath3 , @xmath4 , @xmath5 , @xmath6 , @xmath7 , @xmath8 , @xmath9 , @xmath10 , @xmath7 ,"
+  },
+  {
+    "epoch": 2,
+    "train_loss": 3.983496220346292,
+    "val_loss": 4.5337155832650184,
+    "perplexity": 93.10385432500594,
+    "lr": 8.618791332884264e-05,
+    "grad_norm": 1.8431421518325806,
+    "patience": 0,
+    "chunk_loss": 4.871721864656608,
+    "second_pass_loss": 1.645224340035518,
+    "anchor_loss": 4.724565690227349,
+    "sample": "we consider the case of regularized kernel based methods based on a general convex and lipschitz continuous loss function , on a general kernel , and on the classical regularizing term @xmath0 . \n we show that the proposed method is based on a convex and lipschitz continuous loss function , and on t"
+  },
+  {
+    "epoch": 3,
+    "train_loss": 3.9257318264365195,
+    "val_loss": 4.473179358643845,
+    "perplexity": 87.6349033490511,
+    "lr": 7.019479398526359e-05,
+    "grad_norm": 1.6350786685943604,
+    "patience": 0,
+    "chunk_loss": 4.792995127284527,
+    "second_pass_loss": 1.6105103445092837,
+    "anchor_loss": 4.722224637587865,
+    "sample": "we consider the case of regularized kernel based methods based on a general convex and lipschitz continuous loss function , on a general kernel , and on the classical regularizing term @xmath0 . \n we show that the optimal estimator is in general less prone to the curse of high dimensionality than go"
+  }
+]
