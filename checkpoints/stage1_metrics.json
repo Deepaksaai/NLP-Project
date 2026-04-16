@@ -1,0 +1,152 @@
+[
+  {
+    "epoch": 1,
+    "train_loss": 5.760490328537555,
+    "val_loss": 4.871715429224499,
+    "perplexity": 130.54466506306986,
+    "lr": 0.0004969637859963173,
+    "grad_norm": 2.155472755432129,
+    "patience": 0,
+    "sample": "Amanda Kardashard, 19, is a doctor who has a rare condition .\nShe says she is \"a very good\" and \"turn out\"\nShe says she's \"very concerned about her\" about her family .\nShe says she's not afraid to make it easier for her to make it easier for her ."
+  },
+  {
+    "epoch": 2,
+    "train_loss": 5.038176784034474,
+    "val_loss": 4.614218685756693,
+    "perplexity": 100.90895611972996,
+    "lr": 0.00048335462461201437,
+    "grad_norm": 2.8429577350616455,
+    "patience": 0,
+    "sample": "\"I'm going to be a good man,\" says Dr. Killman .\n\"I'm going to be a good person,\" says Dr. Kinley .\n\"I'm going to be a good friend,\" says Dr. Kaymer .\n\"I'm not going to get a life,\" says Dr. Kaymer ."
+  },
+  {
+    "epoch": 3,
+    "train_loss": 4.839514861860852,
+    "val_loss": 4.426990881176192,
+    "perplexity": 83.67923691380898,
+    "lr": 0.0004594105850740707,
+    "grad_norm": 2.612760543823242,
+    "patience": 0,
+    "sample": "A CNN HQ CNN HQ CNN CNN HQNN CNN HQNNNN1 says it's a \"great-greater than a person\"\nThe two are a group of nurses who are taking part in the procedure .\nThe two are in the U.S. to give up the money to the U.S."
+  },
+  {
+    "epoch": 4,
+    "train_loss": 4.66777944283669,
+    "val_loss": 4.256446229979164,
+    "perplexity": 70.55878766829613,
+    "lr": 0.0004262153272012925,
+    "grad_norm": 2.466047525405884,
+    "patience": 0,
+    "sample": "Zully Broussard, a relative of Zully Broussard, is a great-girlfriend of the world .\nShe says the transplant is a \"very-growing\" and \"very big\"\nShe says the gift is a \"very big\" to give her a lung to a stranger ."
+  },
+  {
+    "epoch": 5,
+    "train_loss": 4.502061449585928,
+    "val_loss": 4.076527112351798,
+    "perplexity": 58.94042054089044,
+    "lr": 0.0003852712026363353,
+    "grad_norm": 2.6242544651031494,
+    "patience": 0,
+    "sample": "The \"Thanks for all support\" is the entire journey .\nThe work is to help one person who can have a life extension .\nThe work is on a swapping and takes a higher power ."
+  },
+  {
+    "epoch": 6,
+    "train_loss": 4.3235778586780125,
+    "val_loss": 3.9759520457507413,
+    "perplexity": 53.30083759363883,
+    "lr": 0.0003384312613851068,
+    "grad_norm": 2.6670966148376465,
+    "patience": 0,
+    "sample": "Zully Broussard is a big data, her specosity is up with big data .\nShe's now a big power power, a doctor says .\nShe says she's just the \"very bigger than all of us all of us all of us all of us\""
+  },
+  {
+    "epoch": 7,
+    "train_loss": 4.19827343513697,
+    "val_loss": 3.905206883663958,
+    "perplexity": 49.66035276523129,
+    "lr": 0.0002878153864426529,
+    "grad_norm": 3.0532898902893066,
+    "patience": 0,
+    "sample": "Zully Broussard selflessly decided to give one of her kidneys to a stranger .\nShe was a stranger who was born in a stranger's heart .\nShe was diagnosed with cancer in March .\nDoctors are trying to save her life ."
+  },
+  {
+    "epoch": 8,
+    "train_loss": 4.110977785231135,
+    "val_loss": 3.8632593405061435,
+    "perplexity": 47.620309504692266,
+    "lr": 0.0002357143520863021,
+    "grad_norm": 3.3312485218048096,
+    "patience": 0,
+    "sample": "Zully Broussard selflessly decided to give one of her kidneys to a strangerosity .\nThe treatment is to be wrapped up Friday in late March .\nThe company is planning to hold a reception for all 12 patients ."
+  },
+  {
+    "epoch": 9,
+    "train_loss": 4.088909327343113,
+    "val_loss": 3.8454466086904002,
+    "perplexity": 46.77957184961702,
+    "lr": 0.00018448614796774787,
+    "grad_norm": 2.7264058589935303,
+    "patience": 0,
+    "sample": "Zully Broussard's gift was data processing of genetic profiles .\nShe's been a major part of the page for the first time since March .\nShe says the company is planning to hold a reception for all 12 patients ."
+  },
+  {
+    "epoch": 10,
+    "train_loss": 4.055366899370875,
+    "val_loss": 3.8186657021082744,
+    "perplexity": 45.543399299528666,
+    "lr": 0.0001364492611703794,
+    "grad_norm": 3.318394422531128,
+    "patience": 0,
+    "sample": "Zully Broussard has been given a kidney to save his life .\nShe says she's not sure what she believes is a big project .\nShe says she's a great fan of the page ."
+  },
+  {
+    "epoch": 11,
+    "train_loss": 4.0045176463543735,
+    "val_loss": 3.7787217366571872,
+    "perplexity": 43.7600690771164,
+    "lr": 9.377774607463456e-05,
+    "grad_norm": 3.0531222820281982,
+    "patience": 0,
+    "sample": "Zully Broussard's gift was data processing of genetic profiles from donor-ient pairs .\nShe says she's just the the the .\nShe says she's just the .\nShe says she's not sure what she's doing ."
+  },
+  {
+    "epoch": 12,
+    "train_loss": 3.95054733317499,
+    "val_loss": 3.7462160375760627,
+    "perplexity": 42.3604878562727,
+    "lr": 5.840283096150424e-05,
+    "grad_norm": 3.6443734169006348,
+    "patience": 0,
+    "sample": "Zully Broussard is taking five surgeons to perform surgeries on 12 people .\nShe says she's a great person who I don't know, but the fact that many people can have a life extension .\nShe says she's not sure what she's going to help her ."
+  },
+  {
+    "epoch": 13,
+    "train_loss": 3.9147414733349395,
+    "val_loss": 3.7209485384775567,
+    "perplexity": 41.30355354335512,
+    "lr": 3.19255144444859e-05,
+    "grad_norm": 3.1794826984405518,
+    "patience": 0,
+    "sample": "Zully Broussard is a covey of doctors and a covey of physician professionals .\nShe says she's not sure what she's going to help this one person who I don't know .\nShe says she's just the\nShe says she's just the ."
+  },
+  {
+    "epoch": 14,
+    "train_loss": 3.893350415606011,
+    "val_loss": 3.7149015790131426,
+    "perplexity": 41.054546256587315,
+    "lr": 1.554410744241337e-05,
+    "grad_norm": 3.5038228034973145,
+    "patience": 0,
+    "sample": "Zully Broussard is a covey of doctors and nurses .\nShe is taking five surgeons, a covey of physician assistants, nurses and .\nShe says she's not sure what she's doing ."
+  },
+  {
+    "epoch": 15,
+    "train_loss": 3.8850523902660195,
+    "val_loss": 3.7116404422824245,
+    "perplexity": 40.920879838521785,
+    "lr": 1e-05,
+    "grad_norm": 4.255120754241943,
+    "patience": 0,
+    "sample": "Zully Broussard's gift was data processing of genetic profiles from donor- .\nShe is taking five surgeons, a covey of doctors and nurses .\nShe says she's not sure what she can do with her ."
+  }
+]

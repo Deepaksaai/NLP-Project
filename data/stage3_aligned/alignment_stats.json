@@ -1,0 +1,17 @@
+{
+  "multilexsum": {
+    "train_cases": 3177,
+    "val_cases": 908,
+    "train_chunks": 138861,
+    "val_chunks": 35864,
+    "second_pass": 3177
+  },
+  "billsum": {
+    "train_chunks": 82261,
+    "val_chunks": 14146,
+    "second_pass": 18063
+  },
+  "disjoint_split": true,
+  "unique_train_cases": 22123,
+  "unique_val_cases": 4177
+}

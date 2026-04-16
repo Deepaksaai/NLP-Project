@@ -1,0 +1,10 @@
+{
+  "mean_summary_words": 78.984,
+  "std_summary_words": 23.677663398232518,
+  "median_summary_words": 85.0,
+  "mean_summary_sentences": 1.762,
+  "mean_compression_ratio": 0.06827073470489947,
+  "min_summary_words": 23,
+  "max_summary_words": 113,
+  "n_evaluated": 500
+}

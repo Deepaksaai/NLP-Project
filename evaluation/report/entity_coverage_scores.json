@@ -1,0 +1,9 @@
+{
+  "overall_entity_coverage": 0.1113758788022435,
+  "n_evaluated": 500,
+  "law_coverage": 0.062002840909090896,
+  "person_coverage": 0.021485486624928853,
+  "org_coverage": 0.10636759659981354,
+  "date_coverage": 0.13484161225828195,
+  "gpe_coverage": 0.1704082326716396
+}
