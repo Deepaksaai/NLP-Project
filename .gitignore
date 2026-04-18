@@ -36,3 +36,13 @@ Thumbs.db
 # Logs (optional — you may want to keep these in git for your report)
 # Uncomment below if you don't want logs in git:
 # logs/*.txt
+
+# QA module ignored folders (too large)
+QA_module/qa_env/
+QA_module/checkpoints/
+QA_module/checkpoints_backup/
+QA_module/data/
+QA_module/model/
+QA_module/stage3_best/
+QA_module/evaluation/qa/source_documents.json
+QA_module/evaluation/qa/generated_answers.json

@@ -1,0 +1,37 @@
+{
+  "n_evaluated": 9988,
+  "retrieval_recall_at_1": 0.9184020824989988,
+  "retrieval_recall_at_3": 0.9449339207048458,
+  "retrieval_recall_at_5": 0.9449339207048458,
+  "answer_reachability_top3": 0.9449339207048458,
+  "by_source": {
+    "cuad": {
+      "n": 1226,
+      "recall_at_1": 0.34176182707993474,
+      "recall_at_3": 0.5513866231647635,
+      "recall_at_5": 0.5513866231647635
+    },
+    "ledgar": {
+      "n": 2834,
+      "recall_at_1": 0.9982357092448836,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0
+    },
+    "squad": {
+      "n": 5928,
+      "recall_at_1": 0.9994939271255061,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0
+    }
+  },
+  "failure_buckets": {
+    "long_q": {
+      "n": 7167,
+      "r1_miss_rate": 0.11287847076880145
+    },
+    "short_q": {
+      "n": 2821,
+      "r1_miss_rate": 0.0021269053527118043
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "pad_id": 0,
+  "cls_id": 32000,
+  "sep_id": 32001,
+  "old_vocab": 32000,
+  "new_vocab": 32002,
+  "source": "C:\\Users\\varun\\OneDrive\\Desktop\\NLP project\\NLP-Project\\checkpoints_backup\\tokenizer.json",
+  "note": "The spec requested [CLS]=5/[SEP]=6 but those ids already belong to BPE tokens in the summarizer tokenizer. Since retraining is forbidden, the new special tokens are appended to the end of the vocabulary. All downstream code reads their ids from this file."
+}

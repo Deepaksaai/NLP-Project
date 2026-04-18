@@ -1,0 +1,14 @@
+{
+  "n_evaluated_answerable": 2185,
+  "legal_term_preservation_overall": 0.6578897507272793,
+  "defined_term_preservation": 0.6666911374091531,
+  "monetary_term_preservation": 0.2558139534883721,
+  "time_period_preservation": 0.3333333333333333,
+  "party_reference_preservation": 0.6834511189634866,
+  "samples": {
+    "defined": 1915,
+    "monetary": 43,
+    "time": 18,
+    "party": 1132
+  }
+}
