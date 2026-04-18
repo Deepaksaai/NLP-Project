@@ -1,5 +1,7 @@
 # Model checkpoints (too large for GitHub — 390MB each)
-checkpoints/*.pt
+# Download from Google Drive link in README
+*.pt
+!checkpoints/tokenizer.json
 
 # Large dataset files (2GB+ each)
 datasets/multilexsum/sources_*.json
@@ -10,6 +12,9 @@ data/stage3_aligned/*.jsonl
 
 # Evaluation outputs (large JSON with full documents)
 evaluation/source_documents.json
+
+# Temp training artifacts
+temp/
 
 # Python cache
 __pycache__/
