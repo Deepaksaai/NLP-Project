@@ -1,0 +1,22 @@
+{
+  "n_evaluated": 3814,
+  "clause_boundary_accuracy_full": 0.6685894074462506,
+  "clause_boundary_accuracy_partial": 0.9525432616675407,
+  "boundary_error_analysis": {
+    "start_boundary_errors": 505,
+    "end_boundary_errors": 940,
+    "which_is_worse": "end"
+  },
+  "by_source": {
+    "ledgar": {
+      "n": 2094,
+      "full": 0.8471824259789876,
+      "partial": 0.9947468958930277
+    },
+    "squad": {
+      "n": 1720,
+      "full": 0.4511627906976744,
+      "partial": 0.9011627906976745
+    }
+  }
+}

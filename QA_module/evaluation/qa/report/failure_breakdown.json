@@ -1,0 +1,21 @@
+{
+  "total": 19622,
+  "category_counts": {
+    "retrieval_failure": 550,
+    "ok": 8899,
+    "missed_answer": 6375,
+    "has_answer_false_positive": 1828,
+    "low_quality_span": 956,
+    "span_boundary_error": 288,
+    "legal_term_hallucination": 726
+  },
+  "category_fractions": {
+    "retrieval_failure": 0.028,
+    "ok": 0.4535,
+    "missed_answer": 0.3249,
+    "has_answer_false_positive": 0.0932,
+    "low_quality_span": 0.0487,
+    "span_boundary_error": 0.0147,
+    "legal_term_hallucination": 0.037
+  }
+}

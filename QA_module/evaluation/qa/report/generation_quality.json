@@ -1,0 +1,11 @@
+{
+  "n_evaluated": 5642,
+  "generation_faithfulness_score": 5642.0,
+  "mean_faithfulness": 1.0,
+  "faithfulness_method": "bow_proxy",
+  "nli_status": "unavailable: ImportError",
+  "mean_simplification_delta": 0.0,
+  "mean_plain_english_reading_level": 13.536931260900351,
+  "mean_legal_span_reading_level": 13.536931260900351,
+  "information_preservation_rate": 1.0
+}

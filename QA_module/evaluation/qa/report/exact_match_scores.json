@@ -1,0 +1,14 @@
+{
+  "em_overall": 0.4222811130363877,
+  "em_answerable_only": 0.11462892261849335,
+  "em_unanswerable_only": 0.7942136665540921,
+  "n_total": 19622,
+  "n_answerable": 10739,
+  "n_unanswerable": 8883,
+  "em_cuad": 0.7022955523672884,
+  "n_cuad": 4182,
+  "em_ledgar": 0.33725820016820857,
+  "n_ledgar": 3567,
+  "em_squad": 0.34919565400488506,
+  "n_squad": 11873
+}

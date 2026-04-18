@@ -1,0 +1,41 @@
+{
+  "overall": {
+    "tp": 3812,
+    "tn": 7055,
+    "fp": 1828,
+    "fn": 6927,
+    "n": 19622,
+    "accuracy": 0.5538171440220161,
+    "true_positive_rate": 0.35496787410373404,
+    "true_negative_rate": 0.7942136665540921,
+    "false_positive_rate": 0.2057863334459079,
+    "false_negative_rate": 0.6450321258962659
+  },
+  "legal": {
+    "tp": 2094,
+    "tn": 2937,
+    "fp": 1,
+    "fn": 2717,
+    "n": 7749,
+    "accuracy": 0.6492450638792102,
+    "true_positive_rate": 0.43525254624818127,
+    "true_negative_rate": 0.9996596324029953,
+    "false_positive_rate": 0.0003403675970047651,
+    "false_negative_rate": 0.5647474537518188
+  },
+  "general": {
+    "tp": 1718,
+    "tn": 4118,
+    "fp": 1827,
+    "fn": 4210,
+    "n": 11873,
+    "accuracy": 0.49153541649119853,
+    "true_positive_rate": 0.2898110661268556,
+    "true_negative_rate": 0.6926829268292682,
+    "false_positive_rate": 0.3073170731707317,
+    "false_negative_rate": 0.7101889338731444
+  },
+  "cross_document_negatives": null,
+  "wrong_clause_negatives": null,
+  "recommended_threshold": null
+}

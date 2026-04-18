@@ -1,0 +1,14 @@
+{
+  "f1_overall": 0.4509951217956857,
+  "f1_answerable_only": 0.16709435514246568,
+  "f1_unanswerable_only": 0.7942136665540921,
+  "n_total": 19622,
+  "n_answerable": 10739,
+  "n_unanswerable": 8883,
+  "f1_cuad": 0.7022955523672884,
+  "n_cuad": 4182,
+  "f1_ledgar": 0.4469695435668692,
+  "n_ledgar": 3567,
+  "f1_squad": 0.36368954080450694,
+  "n_squad": 11873
+}

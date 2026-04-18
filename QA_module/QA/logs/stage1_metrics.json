@@ -1,0 +1,91 @@
+[
+  {
+    "epoch": 1,
+    "train_loss_total": 8.258164542371576,
+    "train_loss_span": 5.697949658740651,
+    "train_loss_has_answer": 1.7068099298260428,
+    "val_em_overall": 0.526,
+    "val_f1_overall": 0.526,
+    "val_has_answer_accuracy": 0.526,
+    "val_false_positive_rate": 0.0,
+    "val_false_negative_rate": 1.0,
+    "val_f1_per_domain": {
+      "general": 0.526
+    },
+    "val_em_per_domain": {
+      "general": 0.526
+    },
+    "lrs": {
+      "heads": 1.3199999999999997e-05
+    },
+    "unfreezing_stage": 0,
+    "trainable_param_count": 12290691
+  },
+  {
+    "epoch": 2,
+    "train_loss_total": 7.415339144793424,
+    "train_loss_span": 5.40057409026406,
+    "train_loss_has_answer": 1.3431767051870174,
+    "val_em_overall": 0.526,
+    "val_f1_overall": 0.526,
+    "val_has_answer_accuracy": 0.526,
+    "val_false_positive_rate": 0.0,
+    "val_false_negative_rate": 1.0,
+    "val_f1_per_domain": {
+      "general": 0.526
+    },
+    "val_em_per_domain": {
+      "general": 0.526
+    },
+    "lrs": {
+      "heads": 2.6399999999999995e-05
+    },
+    "unfreezing_stage": 0,
+    "trainable_param_count": 12290691
+  },
+  {
+    "epoch": 3,
+    "train_loss_total": 6.087315982038325,
+    "train_loss_span": 4.829047937826677,
+    "train_loss_has_answer": 0.8388453632593155,
+    "val_em_overall": 0.388,
+    "val_f1_overall": 0.3985330052334973,
+    "val_has_answer_accuracy": 0.474,
+    "val_false_positive_rate": 1.0,
+    "val_false_negative_rate": 0.0,
+    "val_f1_per_domain": {
+      "general": 0.3985330052334973
+    },
+    "val_em_per_domain": {
+      "general": 0.388
+    },
+    "lrs": {
+      "heads": 3.96e-05
+    },
+    "unfreezing_stage": 0,
+    "trainable_param_count": 12290691
+  },
+  {
+    "epoch": 4,
+    "train_loss_total": 5.161660777438771,
+    "train_loss_span": 4.1787412643432615,
+    "train_loss_has_answer": 0.6552796775644476,
+    "val_em_overall": 0.526,
+    "val_f1_overall": 0.526,
+    "val_has_answer_accuracy": 0.474,
+    "val_false_positive_rate": 1.0,
+    "val_false_negative_rate": 0.0,
+    "val_f1_per_domain": {
+      "general": 0.526
+    },
+    "val_em_per_domain": {
+      "general": 0.526
+    },
+    "lrs": {
+      "heads": 5.279999999999999e-05,
+      "encoder_top": 5.279999999999999e-06
+    },
+    "unfreezing_stage": 1,
+    "trainable_param_count": 15837315
+  }
+]
