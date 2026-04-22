@@ -32,7 +32,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from model.transformer import build_model
 from data.preprocess import load_tokenizer, PAD_ID
 from data.stage2_dataset import build_stage2_data
-from training.loss import LabelSmoothedCrossEntropy
+from training.loss import LabelSmoothedCrossEntropy, CoverageLoss
 from training.schedule import WarmupCosineSchedule
 
 
@@ -51,7 +51,7 @@ STAGE2_CONFIG = {
     "min_lr": 1e-6,
 
     # Training
-    "epochs": 8,
+    "epochs": 12,
     "batch_size": 16,
     "grad_clip": 1.0,
     "dropout": 0.15,
@@ -59,13 +59,14 @@ STAGE2_CONFIG = {
     # Loss
     "label_smoothing": 0.1,
     "ignore_index": 0,
+    "coverage_lambda": 0.5,   # weight for CoverageLoss — fixes cross-attn collapse
 
     # Data
     "max_src": 400,
     "max_tgt": 128,
 
     # Early stopping
-    "patience": 4,
+    "patience": 6,
 
     # Checkpointing
     "save_dir": "checkpoints",
@@ -173,6 +174,8 @@ def train_stage2():
         smoothing=config["label_smoothing"],
         ignore_index=config["ignore_index"],
     )
+    coverage_criterion = CoverageLoss()
+    lambda_cov = config["coverage_lambda"]
 
     # ---- Optimizer ----
     optimizer = torch.optim.AdamW(
@@ -215,6 +218,7 @@ def train_stage2():
         # ── Train ──
         model.train()
         train_loss_sum = 0.0
+        cov_loss_sum   = 0.0
         type_loss_sums = {"chunk": 0.0, "second_pass": 0.0, "anchor": 0.0}
         type_counts = {"chunk": 0, "second_pass": 0, "anchor": 0}
         n_train = len(train_loader)
@@ -225,10 +229,13 @@ def train_stage2():
             tgt_out = batch["tgt_out"].to(device)
             types = batch["types"]
 
-            logits = model(src, tgt_in)
-            loss, per_type = compute_per_type_loss(
+            # Forward with coverage — get both logits and cross-attn weights
+            logits, avg_attn = model(src, tgt_in, return_coverage=True)
+            ce_loss, per_type = compute_per_type_loss(
                 logits, tgt_out, types, criterion
             )
+            cov_loss = coverage_criterion(avg_attn)
+            loss = ce_loss + lambda_cov * cov_loss
 
             optimizer.zero_grad()
             loss.backward()
@@ -238,7 +245,8 @@ def train_stage2():
             optimizer.step()
             lr = scheduler.step()
 
-            train_loss_sum += loss.item()
+            train_loss_sum += ce_loss.item()
+            cov_loss_sum   += cov_loss.item()
             for dtype, l in per_type.items():
                 type_loss_sums[dtype] += l
                 type_counts[dtype] += 1
@@ -246,11 +254,13 @@ def train_stage2():
 
             if (batch_idx + 1) % config["log_every"] == 0:
                 print(f"  batch {batch_idx+1:5d}/{n_train} | "
-                      f"loss {loss.item():.4f} | "
+                      f"ce {ce_loss.item():.4f} | "
+                      f"cov {cov_loss.item():.4f} | "
                       f"grad {grad_norm:.3f} | "
                       f"lr {lr:.2e}")
 
         avg_train_loss = train_loss_sum / n_train
+        avg_cov_loss   = cov_loss_sum / n_train
         avg_type_losses = {
             k: type_loss_sums[k] / max(type_counts[k], 1)
             for k in type_loss_sums
@@ -283,7 +293,8 @@ def train_stage2():
 
         # ── Logging ──
         print(f"\nEpoch {epoch}/{config['epochs']} | time: {elapsed/60:.1f}min")
-        print(f"  train loss   : {avg_train_loss:.4f}")
+        print(f"  train ce loss: {avg_train_loss:.4f}")
+        print(f"  coverage loss: {avg_cov_loss:.4f}  (λ={lambda_cov})")
         print(f"    chunk      : {avg_type_losses['chunk']:.4f}")
         print(f"    second_pass: {avg_type_losses['second_pass']:.4f}")
         print(f"    anchor     : {avg_type_losses['anchor']:.4f}")
@@ -296,6 +307,7 @@ def train_stage2():
         epoch_metrics = {
             "epoch": epoch,
             "train_loss": avg_train_loss,
+            "coverage_loss": avg_cov_loss,
             "val_loss": avg_val_loss,
             "perplexity": perplexity,
             "lr": scheduler.current_lr(),

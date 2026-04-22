@@ -13,6 +13,43 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
+class CoverageLoss(nn.Module):
+    """
+    Coverage loss from See et al. (2017) "Get To The Point".
+
+    Penalizes the decoder for repeatedly attending to the same source
+    positions — the core fix for cross-attention collapse / hallucination.
+
+    At each decode step t the coverage vector c_t is the sum of all
+    previous cross-attention distributions:
+        c_t = Σ_{t'=0}^{t-1}  α_{t'}
+
+    The loss penalizes overlap between the current attention α_t and
+    the accumulated coverage c_t:
+        L_cov = Σ_t Σ_i  min(α_{t,i}, c_{t,i})
+
+    We compute this efficiently in parallel over the full target sequence
+    using a cumsum trick rather than a Python loop.
+
+    Args:
+        attn_weights: (batch, tgt_len, src_len) — cross-attention
+                      weights averaged over heads and layers, as returned
+                      by model.forward(src, tgt, return_coverage=True).
+    Returns:
+        scalar coverage loss (mean over batch and tgt positions)
+    """
+
+    def forward(self, attn_weights: torch.Tensor) -> torch.Tensor:
+        # cumulative[t] = Σ_{t'=0}^{t} α_{t'}
+        cumulative = attn_weights.cumsum(dim=1)          # (B, T, S)
+        # coverage BEFORE step t = cumsum up to t-1
+        prev_coverage = cumulative - attn_weights        # (B, T, S)
+        # penalty: min(current attention, coverage so far)
+        penalty = torch.min(attn_weights, prev_coverage) # (B, T, S)
+        # mean over batch and target positions; sum over source positions
+        return penalty.sum(dim=-1).mean()
+
+
 class LabelSmoothedCrossEntropy(nn.Module):
 
     def __init__(self, vocab_size, smoothing=0.1, ignore_index=0):

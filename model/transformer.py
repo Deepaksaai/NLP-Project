@@ -119,28 +119,39 @@ class TransformerSummarizer(nn.Module):
         x = self.embed_dropout(x)
         return self.encoder(x, src_mask)
 
-    def decode(self, tgt, memory, tgt_mask, src_mask):
+    def decode(self, tgt, memory, tgt_mask, src_mask, return_coverage=False):
         x = self.embedding(tgt) * math.sqrt(self.d_model)
         x = self.pos_encoding(x)
         x = self.embed_dropout(x)
-        return self.decoder(x, memory, tgt_mask, src_mask)
+        return self.decoder(x, memory, tgt_mask, src_mask,
+                            return_coverage=return_coverage)
 
     def project(self, decoder_output):
         """Tied output projection: decoder_output @ embedding.T + bias."""
         return decoder_output @ self.embedding.weight.t() + self.out_bias
 
     # -------------------- Forward --------------------
-    def forward(self, src, tgt):
+    def forward(self, src, tgt, return_coverage=False):
         """
         Args:
-            src: (batch, src_len) — source token IDs
-            tgt: (batch, tgt_len) — target token IDs (decoder input)
+            src:             (batch, src_len) — source token IDs
+            tgt:             (batch, tgt_len) — target token IDs (decoder input)
+            return_coverage: if True return (logits, avg_cross_attn) tuple
+                             where avg_cross_attn is (batch, tgt_len, src_len)
+                             for use in CoverageLoss during training.
         Returns:
             logits: (batch, tgt_len, vocab_size)
+            [avg_cross_attn: (batch, tgt_len, src_len)  — only when return_coverage=True]
         """
         src_mask = self.make_src_mask(src)
         tgt_mask = self.make_tgt_mask(tgt)
         memory = self.encode(src, src_mask)
+
+        if return_coverage:
+            out, avg_attn = self.decode(tgt, memory, tgt_mask, src_mask,
+                                        return_coverage=True)
+            return self.project(out), avg_attn
+
         out = self.decode(tgt, memory, tgt_mask, src_mask)
         return self.project(out)
 
