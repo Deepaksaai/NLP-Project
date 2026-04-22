@@ -1,0 +1,6 @@
+﻿checkpoints/
+data/
+__pycache__/
+*.pt
+*.bin
+*.pyc
