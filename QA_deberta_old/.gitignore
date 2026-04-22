@@ -4,3 +4,8 @@ __pycache__/
 *.pt
 *.bin
 *.pyc
+ask_pdf_tfidf.py
+compare_retrievers.py
+debug_decode.py
+debug_logits.py
+sanity_check.py
