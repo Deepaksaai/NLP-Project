@@ -108,12 +108,33 @@ with tab_summary:
         st.info("Upload and process a document to see its summary.")
     else:
         r = st.session_state.doc_result
-        st.subheader("Document Summary")
-        st.write(r["summary"])
-        st.caption(
-            f"Summary length: {r['word_count']} words  |  "
-            f"Sections processed: {r['total_chunks']}"
-        )
+
+        col_tr, col_tf = st.columns(2, gap="large")
+
+        with col_tr:
+            st.subheader("Baseline — TextRank")
+            st.caption(
+                "Extractive: selects the most important sentences from "
+                "the document using TF-IDF graph ranking."
+            )
+            st.write(r.get("textrank_summary", ""))
+            st.caption(
+                f"Words: {r.get('textrank_word_count', 0)}  |  "
+                f"Method: PageRank on sentence similarity graph"
+            )
+
+        with col_tf:
+            st.subheader("Our Model — Transformer")
+            st.caption(
+                "Abstractive: generates new sentences from scratch using "
+                "a trained sequence-to-sequence Transformer."
+            )
+            st.write(r["summary"])
+            st.caption(
+                f"Words: {r['word_count']}  |  "
+                f"Sections: {r['total_chunks']}  |  "
+                f"Method: Hierarchical beam-search (Stage 3)"
+            )
 
 
 # ----- Tab 2: QA chat -----------------------------------

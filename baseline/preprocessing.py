@@ -5,13 +5,7 @@ import hashlib
 import pickle
 
 import pdfplumber
-import spacy
 from sklearn.feature_extraction.text import TfidfVectorizer
-
-# ---------------------------------------------------------------------------
-# Load spaCy model once at module level
-# ---------------------------------------------------------------------------
-nlp = spacy.load('en_core_web_sm')
 
 # ---------------------------------------------------------------------------
 # Known section keywords that must NOT be removed during cleaning
@@ -281,44 +275,34 @@ def detect_sections(cleaned_text):
 
 def segment_sentences(cleaned_text):
     """
-    Splits cleaned legal text into individual sentences using spaCy.
-    Strips page markers before processing — they confuse the sentence
-    boundary detector.
+    Splits cleaned legal text into individual sentences using regex.
+    Handles common legal abbreviations to avoid false splits.
 
     Input  : cleaned text from clean_text()
     Output : list of sentence strings
     """
+    text = re.sub(r'\[PAGE_\d+\]\n?', '', cleaned_text)
 
-    # Strip page markers before NLP processing
-    text_for_nlp = re.sub(r'\[PAGE_\d+\]\n?', '', cleaned_text)
+    # Protect common abbreviations by replacing their periods temporarily
+    abbrev_pattern = re.compile(
+        r'\b(Inc|Corp|Ltd|LLC|LLP|Co|No|Sec|Art|vs|etc|e\.g|i\.e|'
+        r'U\.S|U\.K|Fig|Dept|Est|approx|Jan|Feb|Mar|Apr|Jun|Jul|'
+        r'Aug|Sep|Oct|Nov|Dec|Mr|Mrs|Ms|Dr|Prof|Sr|Jr)\.',
+        re.IGNORECASE
+    )
+    text = abbrev_pattern.sub(lambda m: m.group(0).replace('.', '<!DOT!>'), text)
 
-    # -------------------------------------------------------------------
-    # Custom rules for legal abbreviations
-    # -------------------------------------------------------------------
-    legal_abbreviations = [
-        'Inc', 'Corp', 'Ltd', 'LLC', 'LLP', 'Co',
-        'No', 'Sec', 'Art', 'vs', 'etc', 'e.g', 'i.e',
-        'U.S', 'U.K', 'Fig', 'Dept', 'Est', 'approx',
-        'Jan', 'Feb', 'Mar', 'Apr', 'Jun', 'Jul',
-        'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-        'Mr', 'Mrs', 'Ms', 'Dr', 'Prof', 'Sr', 'Jr'
-    ]
-    for abbr in legal_abbreviations:
-        nlp.tokenizer.add_special_case(f'{abbr}.', [{'ORTH': f'{abbr}.'}])
-
-    nlp.max_length = 2_000_000
-    doc = nlp(text_for_nlp)
+    # Split on sentence-ending punctuation followed by whitespace + capital letter
+    raw_sentences = re.split(r'(?<=[.!?])\s+(?=[A-Z("])', text)
 
     sentences = []
-    for sent in doc.sents:
-        sentence = sent.text.strip()
-        if not sentence:
+    for sent in raw_sentences:
+        sent = sent.replace('<!DOT!>', '.').strip()
+        if not sent or len(sent) < 10:
             continue
-        if len(sentence) < 10:
+        if re.match(r'^[\d\s\W]+$', sent):
             continue
-        if re.match(r'^[\d\s\W]+$', sentence):
-            continue
-        sentences.append(sentence)
+        sentences.append(sent)
 
     return sentences
 
@@ -567,27 +551,33 @@ def detect_document_type(text):
 
 def extract_document_metadata(cleaned_text, pdf_path, doc_id):
     """
-    Extracts document-level metadata using spaCy NER and regex.
+    Extracts document-level metadata using regex patterns.
     Runs on the first 5000 characters only for speed.
 
     Input  : cleaned text, pdf_path, doc_id
     Output : metadata dict
     """
-    # Strip markers before NER
     text_for_ner = re.sub(r'\[PAGE_\d+\]\n?', '', cleaned_text)
     preview      = text_for_ner[:5000]
 
-    doc = nlp(preview)
+    # Extract organisation / party names — look for capitalised name + entity suffix
+    org_pattern = re.compile(
+        r'\b([A-Z][A-Za-z0-9&,.\'\- ]{2,50}?'
+        r'(?:Inc\.?|Corp\.?|Ltd\.?|LLC|LLP|L\.L\.C\.?|L\.P\.?|Company|Corporation|'
+        r'Limited|Partners|Group|Holdings|Trust|Authority|Association))\b'
+    )
+    parties = list(dict.fromkeys(m.group(1).strip() for m in org_pattern.finditer(preview)))[:10]
 
-    parties = list(dict.fromkeys([
-        ent.text for ent in doc.ents
-        if ent.label_ in ("PERSON", "ORG")
-    ]))[:10]
-
-    dates = list(dict.fromkeys([
-        ent.text for ent in doc.ents
-        if ent.label_ == "DATE"
-    ]))[:5]
+    # Extract dates
+    date_pattern = re.compile(
+        r'\b(?:\d{1,2}(?:st|nd|rd|th)?\s+(?:January|February|March|April|May|June|'
+        r'July|August|September|October|November|December)\s+\d{4}|'
+        r'(?:January|February|March|April|May|June|July|August|September|'
+        r'October|November|December)\s+\d{1,2},?\s+\d{4}|'
+        r'\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})\b',
+        re.IGNORECASE
+    )
+    dates = list(dict.fromkeys(m.group(0) for m in date_pattern.finditer(preview)))[:5]
 
     # Governing law / jurisdiction
     gov_law_match = re.search(
@@ -646,7 +636,8 @@ def build_tfidf_index(chunks):
 # ===========================================================================
 
 def save_document_store(doc_id, metadata, chunks, tfidf_index,
-                        store_root="document_store"):
+                        store_root="document_store",
+                        sentences=None, sections=None, cleaned_text=None):
     """
     Saves all processed data for one document to disk.
 
@@ -656,6 +647,9 @@ def save_document_store(doc_id, metadata, chunks, tfidf_index,
           metadata.json
           chunks.json
           tfidf_index.pkl
+          sentences.json      (optional — for TextRank)
+          sections.json       (optional — for section-aware TextRank)
+          cleaned_text.txt    (optional — for section-aware TextRank)
     """
     doc_dir = os.path.join(store_root, doc_id)
     os.makedirs(doc_dir, exist_ok=True)
@@ -675,6 +669,18 @@ def save_document_store(doc_id, metadata, chunks, tfidf_index,
     # Save TF-IDF index as pickle
     with open(os.path.join(doc_dir, "tfidf_index.pkl"), "wb") as f:
         pickle.dump(tfidf_index, f)
+
+    if sentences is not None:
+        with open(os.path.join(doc_dir, "sentences.json"), "w", encoding="utf-8") as f:
+            json.dump(sentences, f, ensure_ascii=False)
+
+    if sections is not None:
+        with open(os.path.join(doc_dir, "sections.json"), "w", encoding="utf-8") as f:
+            json.dump(sections, f, ensure_ascii=False)
+
+    if cleaned_text is not None:
+        with open(os.path.join(doc_dir, "cleaned_text.txt"), "w", encoding="utf-8") as f:
+            f.write(cleaned_text)
 
     print(f"  Saved to: {doc_dir}/")
 
@@ -807,7 +813,8 @@ def preprocess_document(pdf_path, store_root="document_store"):
           f"{tfidf_index['matrix'].shape[1]} features)")
 
     # Task 8 — Save to document store
-    save_document_store(doc_id, metadata, chunks, tfidf_index, store_root)
+    save_document_store(doc_id, metadata, chunks, tfidf_index, store_root,
+                        sentences=sentences, sections=sections, cleaned_text=cleaned_text)
     print(f"Task 8 done — Saved to document store")
 
     print(f"\n{'='*60}")
@@ -827,7 +834,8 @@ def load_document_store(doc_id, store_root="document_store"):
     Use this at inference time instead of reprocessing.
 
     Input  : doc_id string
-    Output : (metadata, chunks, tfidf_index)
+    Output : (metadata, chunks, tfidf_index, sentences, sections, cleaned_text)
+             sentences, sections, cleaned_text are None if not cached.
     """
     doc_dir = os.path.join(store_root, doc_id)
 
@@ -840,7 +848,25 @@ def load_document_store(doc_id, store_root="document_store"):
     with open(os.path.join(doc_dir, "tfidf_index.pkl"), "rb") as f:
         tfidf_index = pickle.load(f)
 
-    return metadata, chunks, tfidf_index
+    sentences_path = os.path.join(doc_dir, "sentences.json")
+    sentences = None
+    if os.path.exists(sentences_path):
+        with open(sentences_path, "r", encoding="utf-8") as f:
+            sentences = json.load(f)
+
+    sections_path = os.path.join(doc_dir, "sections.json")
+    sections = None
+    if os.path.exists(sections_path):
+        with open(sections_path, "r", encoding="utf-8") as f:
+            sections = json.load(f)
+
+    cleaned_text_path = os.path.join(doc_dir, "cleaned_text.txt")
+    cleaned_text = None
+    if os.path.exists(cleaned_text_path):
+        with open(cleaned_text_path, "r", encoding="utf-8") as f:
+            cleaned_text = f.read()
+
+    return metadata, chunks, tfidf_index, sentences, sections, cleaned_text
 
 
 # ===========================================================================

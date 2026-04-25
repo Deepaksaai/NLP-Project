@@ -29,10 +29,11 @@ from QA_deberta.heads import SpanHead, HasAnswerHead
 from QA_deberta.loss import MAX_ANSWER_LEN
 
 # ─── Model config ──────────────────────────────────────────────────────────────
-DEBERTA_MODEL_NAME = "deepset/deberta-v3-large-squad2"
-DEBERTA_HIDDEN     = 1024   # was 768 for base
+# The saved checkpoint (deberta_best.pt) was trained with the base model.
+DEBERTA_MODEL_NAME = "deepset/deberta-v3-base-squad2"
+DEBERTA_HIDDEN     = 768    # base hidden size (large is 1024)
 DEBERTA_MAX_LEN    = 512
-N_ENCODER_LAYERS   = 24     # was 12 for base
+N_ENCODER_LAYERS   = 12     # base layers (large is 24)
 
 # Sliding window settings for long legal documents
 WINDOW_SIZE   = 384
@@ -45,7 +46,7 @@ class DebertaQAModel(nn.Module):
     def __init__(
         self,
         model_name: str = DEBERTA_MODEL_NAME,
-        freeze_layers: int = 16,     # freeze bottom 16 of 24 — top 8 are trainable
+        freeze_layers: int = 8,      # freeze bottom 8 of 12 for base
         dropout: float = 0.1,
     ):
         super().__init__()
@@ -57,10 +58,11 @@ class DebertaQAModel(nn.Module):
 
         self._freeze_layers(freeze_layers)
 
-        # QA heads — same design as heads.py, but d_model = 1024 for large
-        self.start_head      = SpanHead(DEBERTA_HIDDEN)
-        self.end_head        = SpanHead(DEBERTA_HIDDEN)
-        self.has_answer_head = HasAnswerHead(DEBERTA_HIDDEN)
+        # Auto-detect hidden size from the loaded model config
+        hidden_size = self.deberta.config.hidden_size
+        self.start_head      = SpanHead(hidden_size)
+        self.end_head        = SpanHead(hidden_size)
+        self.has_answer_head = HasAnswerHead(hidden_size)
 
         for head in (self.start_head, self.end_head, self.has_answer_head):
             for p in head.parameters():
@@ -75,9 +77,9 @@ class DebertaQAModel(nn.Module):
             for p in layer.parameters():
                 p.requires_grad = False
 
-    def unfreeze_top_layers(self, keep_frozen: int = 12):
+    def unfreeze_top_layers(self, keep_frozen: int = 6):
         """Unfreeze layers above `keep_frozen` for progressive fine-tuning.
-        With 24 layers, keep_frozen=12 unfreezes the top 12 layers."""
+        With 12 layers, keep_frozen=6 unfreezes the top 6 layers."""
         for i, layer in enumerate(self.deberta.encoder.layer):
             if i >= keep_frozen:
                 for p in layer.parameters():
@@ -217,7 +219,7 @@ def predict_span(
 
 
 def build_deberta_qa(
-    freeze_layers: int = 16,
+    freeze_layers: int = 8,
     dropout: float = 0.1,
     model_name: str = DEBERTA_MODEL_NAME,
 ):

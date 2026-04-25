@@ -6,9 +6,8 @@ Connects:
                                     TF-IDF index, document store)
     baseline/inference/
         summarizer_inference.py    (hierarchical beam-search summarizer)
-    QA_module/QA/inference/
-        qa_inference.py            (span-extraction QA on pre-retrieved
-                                    chunks + plain-English rewriter)
+    QA_deberta/
+        model.py                   (DeBERTa span-extraction QA)
 
 Usage:
     from pipeline import LegalDocumentPipeline
@@ -21,21 +20,15 @@ Usage:
 
 import os
 import sys
-import json
 import torch
 
-# -------------------------------------------------------
-# Path setup — put the project root and QA_module on sys.path
-# before any local imports so both package trees resolve.
-# -------------------------------------------------------
-_HERE    = os.path.dirname(os.path.abspath(__file__))
-_QA_ROOT = os.path.join(_HERE, "QA_module")
-
-for _p in (_HERE, _QA_ROOT):
+_HERE = os.path.dirname(os.path.abspath(__file__))
+for _p in (_HERE,):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
 from tokenizers import Tokenizer
+from transformers import AutoTokenizer
 
 from baseline.preprocessing import (
     preprocess_document,
@@ -47,25 +40,20 @@ from baseline.inference.summarizer_inference import (
     load_summarizer,
     run_summarization,
 )
-from QA.inference.qa_inference import (
-    load_qa_model,
-    load_generation_model,
-    run_qa,
-    run_generation,
-)
+from QA_deberta.model import DebertaQAModel, predict_span, DEBERTA_MODEL_NAME
+from text_rank_summarizer import extractive_summarize
 
 
 # -------------------------------------------------------
-# Fixed paths — all resolved against this file's location
+# Paths
 # -------------------------------------------------------
-_SUMM_TOKENIZER  = os.path.join(_HERE,    "checkpoints", "tokenizer.json")
-_SUMM_CKPT       = os.path.join(_HERE,    "checkpoints", "stage3_best.pt")
-_QA_TOKENIZER    = os.path.join(_QA_ROOT, "tokenizer",   "qa_tokenizer.json")
-_QA_SPECIAL_TOK  = os.path.join(_QA_ROOT, "tokenizer",   "qa_special_tokens.json")
-_QA_CKPT         = os.path.join(_QA_ROOT, "checkpoints", "qa_stage3_best.pt")
-_STORE_ROOT      = os.path.join(_HERE,    "document_store")
+_SUMM_DIR       = os.path.join(_HERE, "CHECKPOINTS", "summarizer_checkpoints")
+_SUMM_TOKENIZER = os.path.join(_SUMM_DIR, "tokenizer.json")
+_SUMM_CKPT      = os.path.join(_SUMM_DIR, "stage3_best.pt")
 
-# Threshold for "did we find an answer?"
+_QA_CKPT        = os.path.join(_HERE, "QA_deberta", "deberta_best.pt")
+_STORE_ROOT     = os.path.join(_HERE, "document_store")
+
 _HAS_ANSWER_THRESHOLD = 0.5
 
 
@@ -77,77 +65,53 @@ class LegalDocumentPipeline:
     End-to-end legal-document assistant.
 
     Loads the summarizer and QA models once at construction time, then
-    answers any number of process_document() / answer() calls without
+    handles any number of process_document() / answer() calls without
     reloading weights.
     """
 
-    # -----------------------------------------------------
-    # INIT — load models, tokenizers, and state
-    # -----------------------------------------------------
     def __init__(self):
-        # --- device ---
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         print(f"Running on: {self.device}")
 
-        # --- tokenizers ---
-        # The summarizer's BPE (32 000 vocab) and the QA tokenizer
-        # (32 002 vocab — adds [CLS] and [SEP]) share the first 32 000
-        # rows, so either can tokenize legal text. We load both and hand
-        # each model the tokenizer it was trained with.
+        # --- summarizer tokenizer (custom BPE 32k vocab) ---
         self.summ_tokenizer = Tokenizer.from_file(_SUMM_TOKENIZER)
-        self.qa_tokenizer   = Tokenizer.from_file(_QA_TOKENIZER)
-
-        with open(_QA_SPECIAL_TOK) as f:
-            self.qa_meta = json.load(f)
-
-        print(f"Tokenizers loaded — summ vocab: "
-              f"{self.summ_tokenizer.get_vocab_size()}, "
-              f"qa vocab: {self.qa_tokenizer.get_vocab_size()}")
+        print(f"Summarizer tokenizer loaded — vocab: {self.summ_tokenizer.get_vocab_size()}")
 
         # --- summarizer ---
         self.summarizer = load_summarizer(_SUMM_CKPT, self.device)
         print("Summarizer loaded")
 
-        # --- QA model ---
-        self.qa_model = load_qa_model(_QA_CKPT, self.qa_meta, self.device)
-        print("QA model loaded")
-
-        # --- (optional) generation model — none trained, so None ---
-        self.gen_model = load_generation_model()
-        print("Generation rewriter ready (using summarizer as backbone)")
+        # --- QA model (DeBERTa) ---
+        print(f"Loading QA model from {_QA_CKPT} ...")
+        self.qa_tokenizer = AutoTokenizer.from_pretrained(DEBERTA_MODEL_NAME)
+        self.qa_model = DebertaQAModel(model_name=DEBERTA_MODEL_NAME)
+        ckpt = torch.load(_QA_CKPT, map_location="cpu", weights_only=False)
+        self.qa_model.load_state_dict(ckpt["model_state"])
+        self.qa_model.to(self.device)
+        self.qa_model.eval()
+        print(f"QA model loaded (epoch {ckpt.get('epoch', '?')}, "
+              f"val F1={ckpt.get('val_f1', 0):.4f})")
 
         # --- runtime state ---
-        self.current_doc_id       = None
-        self.current_metadata     = None
-        self.current_chunks       = None
-        self.current_tfidf_index  = None
-        self.conversation_history = []
-        self.current_summary      = None
+        self.current_doc_id         = None
+        self.current_metadata       = None
+        self.current_chunks         = None
+        self.current_tfidf_index    = None
+        self.conversation_history   = []
+        self.current_summary        = None
+        self.current_textrank_summary = None
 
         print("Pipeline ready\n")
 
-    # -----------------------------------------------------
+    # --------------------------------------------------
     # DOCUMENT INGEST + SUMMARY
-    # -----------------------------------------------------
+    # --------------------------------------------------
     def process_document(self, pdf_path: str) -> dict:
         """
         Preprocess a PDF (with caching) and generate a summary.
 
-        Args:
-            pdf_path: Path to a legal PDF.
-
-        Returns:
-            {
-              "doc_id":        str,
-              "doc_type":      str,
-              "parties":       list[str],
-              "dates":         list[str],
-              "jurisdiction":  str,
-              "total_chunks":  int,
-              "summary":       str,
-              "word_count":    int,
-              "message":       str,
-            }
+        Returns a dict with doc_id, doc_type, parties, dates,
+        jurisdiction, total_chunks, summary, word_count, message.
         """
         if not os.path.exists(pdf_path):
             raise FileNotFoundError(f"PDF not found: {pdf_path}")
@@ -155,26 +119,26 @@ class LegalDocumentPipeline:
         doc_id = generate_doc_id(pdf_path)
         store_path = os.path.join(_STORE_ROOT, doc_id)
 
+        sentences = sections = cleaned_text = None
+
         if os.path.exists(store_path):
             print(f"Document {doc_id} already indexed — loading from cache")
-            metadata, chunks, tfidf_index = load_document_store(
-                doc_id, store_root=_STORE_ROOT,
-            )
+            metadata, chunks, tfidf_index, sentences, sections, cleaned_text = \
+                load_document_store(doc_id, store_root=_STORE_ROOT)
         else:
-            (_cleaned_text, _sections, _sentences, chunks,
+            (cleaned_text, sections, sentences, chunks,
              metadata, tfidf_index) = preprocess_document(
                 pdf_path, store_root=_STORE_ROOT,
             )
 
-        # Cache on instance
         self.current_doc_id       = doc_id
         self.current_metadata     = metadata
         self.current_chunks       = chunks
         self.current_tfidf_index  = tfidf_index
         self.conversation_history = []
 
-        # Summarize
-        print("\nSummarizing...")
+        # --- Transformer summarizer ---
+        print("\nRunning transformer summarizer...")
         summary_result = run_summarization(
             chunks=self.current_chunks,
             model=self.summarizer,
@@ -182,61 +146,68 @@ class LegalDocumentPipeline:
             device=self.device,
         )
         self.current_summary = summary_result["summary"]
-        print(f"Summary generated — {summary_result['word_count']} words "
+        print(f"Transformer summary — {summary_result['word_count']} words "
               f"(path: {summary_result['path']})")
 
+        # --- TextRank baseline summarizer ---
+        print("Running TextRank summarizer...")
+        textrank_summary = ""
+        if sentences:
+            try:
+                textrank_summary, _ = extractive_summarize(
+                    sentences,
+                    sections=sections,
+                    cleaned_text=cleaned_text,
+                    num_sentences=8,
+                    min_words=12,
+                    max_words=80,
+                    position_weight=0.05,
+                    redundancy_threshold=0.35,
+                )
+                print(f"TextRank summary — {len(textrank_summary.split())} words")
+            except Exception as e:
+                print(f"TextRank failed: {e}")
+                textrank_summary = "TextRank summarization unavailable."
+        else:
+            textrank_summary = "TextRank requires sentence data (re-process the document)."
+        self.current_textrank_summary = textrank_summary
+
         return {
-            "doc_id":       doc_id,
-            "doc_type":     metadata["doc_type"],
-            "parties":      metadata["parties"],
-            "dates":        metadata["dates"],
-            "jurisdiction": metadata["jurisdiction"],
-            "total_chunks": len(chunks),
-            "summary":      self.current_summary,
-            "word_count":   summary_result["word_count"],
-            "message":      f"Document processed. "
-                            f"{len(chunks)} sections indexed.",
+            "doc_id":            doc_id,
+            "doc_type":          metadata["doc_type"],
+            "parties":           metadata["parties"],
+            "dates":             metadata["dates"],
+            "jurisdiction":      metadata["jurisdiction"],
+            "total_chunks":      len(chunks),
+            "summary":           self.current_summary,
+            "textrank_summary":  self.current_textrank_summary,
+            "word_count":        summary_result["word_count"],
+            "textrank_word_count": len(textrank_summary.split()),
+            "message":           f"Document processed. {len(chunks)} sections indexed.",
         }
 
-    # -----------------------------------------------------
+    # --------------------------------------------------
     # QA
-    # -----------------------------------------------------
+    # --------------------------------------------------
     def answer(self, question: str) -> dict:
         """
-        Answer a natural-language question about the currently loaded
-        document.
+        Answer a natural-language question about the currently loaded document.
 
-        Args:
-            question: User question.
-
-        Returns:
-            {
-              "found":          bool,
-              "plain_answer":   str,
-              "raw_span":       str | None,
-              "section":        str | None,
-              "page_start":     int | None,
-              "page_end":       int | None,
-              "source_display": str | None,
-              "confidence":     "High" | "Medium" | "Low" | None,
-            }
+        Returns a dict with found, plain_answer, raw_span, section,
+        page_start, page_end, source_display, confidence.
         """
         if self.current_doc_id is None:
-            raise RuntimeError(
-                "No document loaded. Call process_document() first."
-            )
+            raise RuntimeError("No document loaded. Call process_document() first.")
 
-        # --- build query augmented with recent chat history ---
+        # augment query with recent history
         if self.conversation_history:
             history_pairs = self.conversation_history[-2:]
-            history_text = " ".join(
-                f"Q: {q} A: {a}" for q, a in history_pairs
-            )
+            history_text = " ".join(f"Q: {q} A: {a}" for q, a in history_pairs)
             augmented_query = f"{history_text} Q: {question}"
         else:
             augmented_query = question
 
-        # --- retrieve top-5 chunks ---
+        # retrieve top-5 chunks
         top_chunks = retrieve_chunks(
             question=augmented_query,
             tfidf_index=self.current_tfidf_index,
@@ -244,34 +215,34 @@ class LegalDocumentPipeline:
             k=5,
         )
 
-        # --- run span extraction per chunk ---
-        per_chunk = run_qa(
-            question=question,
-            top_chunks=top_chunks,
-            model=self.qa_model,
-            tokenizer=self.qa_tokenizer,
-            device=self.device,
-        )
+        # run span extraction on each chunk
+        results = []
+        for chunk in top_chunks:
+            context = chunk.get("text", "")
+            if not context.strip():
+                continue
+            pred = predict_span(
+                model=self.qa_model,
+                tokenizer=self.qa_tokenizer,
+                question=question,
+                context=context,
+                device=self.device,
+                no_answer_threshold=_HAS_ANSWER_THRESHOLD,
+            )
+            results.append({
+                "chunk":           chunk,
+                "raw_span":        pred["answer"],
+                "score":           pred["score"],
+                "has_answer_prob": pred["has_answer_prob"],
+            })
 
-        if not per_chunk:
+        if not results:
             return self._not_found_response(question)
 
-        # pick the best chunk by combined evidence
-        winning = max(per_chunk, key=lambda r: r["combined_score"])
+        winning = max(results, key=lambda r: r["score"])
 
-        # --- has-answer threshold ---
-        if (winning["has_answer_prob"] < _HAS_ANSWER_THRESHOLD
-                or not winning["raw_span"]):
+        if winning["has_answer_prob"] < _HAS_ANSWER_THRESHOLD or not winning["raw_span"]:
             return self._not_found_response(question)
-
-        # --- plain-English generation (summarizer as rewriter) ---
-        plain = run_generation(
-            question=question,
-            raw_span=winning["raw_span"],
-            model=self.summarizer,
-            tokenizer=self.summ_tokenizer,
-            device=self.device,
-        )
 
         prob = winning["has_answer_prob"]
         if prob > 0.80:
@@ -283,47 +254,46 @@ class LegalDocumentPipeline:
 
         chunk = winning["chunk"]
         response = {
-            "found":         True,
-            "plain_answer":  plain,
-            "raw_span":      winning["raw_span"],
-            "section":       chunk.get("section"),
-            "page_start":    chunk.get("page_start"),
-            "page_end":      chunk.get("page_end"),
+            "found":          True,
+            "plain_answer":   winning["raw_span"],
+            "raw_span":       winning["raw_span"],
+            "section":        chunk.get("section"),
+            "page_start":     chunk.get("page_start"),
+            "page_end":       chunk.get("page_end"),
             "source_display": (
                 f"Found in {chunk.get('section', 'document')}, "
                 f"Pages {chunk.get('page_start', '?')}"
                 f"-{chunk.get('page_end', '?')}"
             ),
-            "confidence":    confidence,
+            "confidence":     confidence,
         }
 
-        # keep last 3 turns
-        self.conversation_history.append((question, plain))
+        self.conversation_history.append((question, winning["raw_span"]))
         self.conversation_history = self.conversation_history[-3:]
 
         return response
 
-    # -----------------------------------------------------
+    # --------------------------------------------------
     # RESET
-    # -----------------------------------------------------
+    # --------------------------------------------------
     def reset(self):
         """Clear per-document state; keep loaded models."""
-        self.conversation_history = []
-        self.current_doc_id       = None
-        self.current_metadata     = None
-        self.current_chunks       = None
-        self.current_tfidf_index  = None
-        self.current_summary      = None
+        self.conversation_history     = []
+        self.current_doc_id           = None
+        self.current_metadata         = None
+        self.current_chunks           = None
+        self.current_tfidf_index      = None
+        self.current_summary          = None
+        self.current_textrank_summary = None
         print("Pipeline reset — ready for new document")
 
-    # -----------------------------------------------------
+    # --------------------------------------------------
     # INTERNAL
-    # -----------------------------------------------------
+    # --------------------------------------------------
     def _not_found_response(self, question: str) -> dict:
         msg = ("This information was not found in the document you "
                "provided. The document may not contain a clause "
                "addressing this question.")
-        # still log the turn so subsequent retrieval is aware
         self.conversation_history.append((question, msg))
         self.conversation_history = self.conversation_history[-3:]
         return {
@@ -354,15 +324,13 @@ if __name__ == "__main__":
     print("\n" + "=" * 60)
     print("QA")
     print("=" * 60)
-    questions = [
+    for q in [
         "What is the termination notice period?",
         "Who are the parties to this agreement?",
         "What is the governing law?",
-    ]
-    for q in questions:
+    ]:
         r = pipe.answer(q)
         print(f"\nQ: {q}")
         print(f"A: {r['plain_answer']}")
         if r["found"]:
-            print(f"   Source: {r['source_display']}  | "
-                  f"Confidence: {r['confidence']}")
+            print(f"   Source: {r['source_display']}  |  Confidence: {r['confidence']}")
