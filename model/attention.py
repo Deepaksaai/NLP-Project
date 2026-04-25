@@ -36,21 +36,18 @@ class MultiHeadAttention(nn.Module):
 
         self.dropout = nn.Dropout(dropout)
 
-    def forward(self, query, key, value, mask=None, return_weights=False):
+    def forward(self, query, key, value, mask=None):
         """
         Args:
-            query:          (batch, q_len, d_model)
-            key:            (batch, k_len, d_model)
-            value:          (batch, k_len, d_model)
-            mask:           bool tensor, True = attend, False = mask out
-                            Shape: (batch, 1, q_len, k_len) for causal+pad
-                               or: (batch, 1, 1, k_len)     for padding only
-            return_weights: if True, also return avg attention weights
+            query:  (batch, q_len, d_model)
+            key:    (batch, k_len, d_model)
+            value:  (batch, k_len, d_model)
+            mask:   bool tensor, True = attend, False = mask out
+                    Shape: (batch, 1, q_len, k_len) for causal+pad
+                       or: (batch, 1, 1, k_len)     for padding only
 
         Returns:
-            output:      (batch, q_len, d_model)
-            attn_weights (only when return_weights=True):
-                         (batch, q_len, k_len) averaged over heads
+            output: (batch, q_len, d_model)
         """
         batch_size = query.size(0)
 
@@ -76,9 +73,5 @@ class MultiHeadAttention(nn.Module):
 
         # Concatenate heads: (batch, q_len, d_model)
         context = context.transpose(1, 2).contiguous().view(batch_size, -1, self.d_model)
-        output = self.W_o(context)
 
-        if return_weights:
-            # Average over heads: (batch, q_len, k_len)
-            return output, attn_weights.mean(dim=1)
-        return output
+        return self.W_o(context)

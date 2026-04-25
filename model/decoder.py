@@ -11,7 +11,6 @@ attend to positions 0..i (autoregressive generation).
 Cross-attention reads from the encoder output.
 """
 
-import torch
 import torch.nn as nn
 from model.attention import MultiHeadAttention
 from model.encoder import FeedForward
@@ -31,20 +30,13 @@ class DecoderLayer(nn.Module):
         self.dropout2 = nn.Dropout(dropout)
         self.dropout3 = nn.Dropout(dropout)
 
-    def forward(self, x, memory, tgt_mask=None, src_mask=None,
-                return_cross_attn=False):
+    def forward(self, x, memory, tgt_mask=None, src_mask=None):
         """
         Args:
-            x:                (batch, tgt_len, d_model) — decoder input
-            memory:           (batch, src_len, d_model) — encoder output
-            tgt_mask:         causal + padding mask for decoder self-attention
-            src_mask:         padding mask for encoder output
-            return_cross_attn: if True, also return cross-attention weights
-
-        Returns:
-            x:           (batch, tgt_len, d_model)
-            cross_attn   (only when return_cross_attn=True):
-                         (batch, tgt_len, src_len)
+            x:        (batch, tgt_len, d_model) — decoder input
+            memory:   (batch, src_len, d_model) — encoder output
+            tgt_mask: causal + padding mask for decoder self-attention
+            src_mask: padding mask for encoder output
         """
         # Masked self-attention + residual
         normed = self.norm1(x)
@@ -52,20 +44,12 @@ class DecoderLayer(nn.Module):
 
         # Cross-attention to encoder output + residual
         normed = self.norm2(x)
-        if return_cross_attn:
-            cross_out, cross_weights = self.cross_attn(
-                normed, memory, memory, src_mask, return_weights=True
-            )
-            x = x + self.dropout2(cross_out)
-        else:
-            x = x + self.dropout2(self.cross_attn(normed, memory, memory, src_mask))
+        x = x + self.dropout2(self.cross_attn(normed, memory, memory, src_mask))
 
         # FFN + residual
         normed = self.norm3(x)
         x = x + self.dropout3(self.ffn(normed))
 
-        if return_cross_attn:
-            return x, cross_weights
         return x
 
 
@@ -80,28 +64,7 @@ class Decoder(nn.Module):
         ])
         self.norm = nn.LayerNorm(d_model)
 
-    def forward(self, x, memory, tgt_mask=None, src_mask=None,
-                return_coverage=False):
-        """
-        Args:
-            return_coverage: if True, collect cross-attention weights from
-                             all layers and return averaged coverage tensor
-                             (batch, tgt_len, src_len) for use in CoverageLoss.
-        """
-        if not return_coverage:
-            for layer in self.layers:
-                x = layer(x, memory, tgt_mask, src_mask)
-            return self.norm(x)
-
-        # Collect cross-attention weights from every layer
-        all_cross_attn = []
+    def forward(self, x, memory, tgt_mask=None, src_mask=None):
         for layer in self.layers:
-            x, cross_w = layer(x, memory, tgt_mask, src_mask,
-                               return_cross_attn=True)
-            all_cross_attn.append(cross_w)   # each: (B, tgt_len, src_len)
-
-        # Average cross-attention across all decoder layers
-        # (B, tgt_len, src_len)
-        avg_attn = torch.stack(all_cross_attn, dim=0).mean(dim=0)
-
-        return self.norm(x), avg_attn
+            x = layer(x, memory, tgt_mask, src_mask)
+        return self.norm(x)
