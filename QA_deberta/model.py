@@ -28,8 +28,8 @@ try:
 except ImportError:
     _HF_AVAILABLE = False
 
-from QA_deberta_old.heads import SpanHead, HasAnswerHead   # CORRECT
-from QA_deberta_old.loss import MAX_ANSWER_LEN
+from QA_deberta.heads import SpanHead, HasAnswerHead
+from QA_deberta.loss import MAX_ANSWER_LEN
 
 DEBERTA_MODEL_NAME = "deepset/deberta-v3-base-squad2"
 DEBERTA_HIDDEN     = 768
