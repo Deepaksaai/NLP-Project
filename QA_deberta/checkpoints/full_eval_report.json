@@ -1,0 +1,390 @@
+{
+  "n_total": 705,
+  "overall_f1": 0.27745650059743454,
+  "overall_em": 0.2,
+  "answerable": {
+    "n": 705,
+    "f1": 0.27745650059743454,
+    "em": 0.2
+  },
+  "unanswerable": {
+    "n": 0,
+    "f1": 0.0,
+    "em": 0.0
+  },
+  "has_answer": {
+    "tp": 705,
+    "fp": 0,
+    "tn": 0,
+    "fn": 0
+  },
+  "per_category": {
+    "Document Name": {
+      "n": 52,
+      "f1": 0.9337705563667101,
+      "em": 0.8269230769230769
+    },
+    "Parties": {
+      "n": 51,
+      "f1": 0.3952335225416978,
+      "em": 0.29411764705882354
+    },
+    "Agreement Date": {
+      "n": 46,
+      "f1": 0.9171183888575192,
+      "em": 0.8695652173913043
+    },
+    "Effective Date": {
+      "n": 42,
+      "f1": 0.7385800527361326,
+      "em": 0.6666666666666666
+    },
+    "Expiration Date": {
+      "n": 45,
+      "f1": 0.17715171776387995,
+      "em": 0.1111111111111111
+    },
+    "Renewal Term": {
+      "n": 21,
+      "f1": 0.11760649273375118,
+      "em": 0.047619047619047616
+    },
+    "Notice Period To Terminate Renewal": {
+      "n": 15,
+      "f1": 0.13409457234362812,
+      "em": 0.06666666666666667
+    },
+    "Governing Law": {
+      "n": 42,
+      "f1": 0.09282984223255793,
+      "em": 0.0
+    },
+    "Exclusivity": {
+      "n": 20,
+      "f1": 0.17757902281584126,
+      "em": 0.1
+    },
+    "Termination For Convenience": {
+      "n": 18,
+      "f1": 0.051228297477009625,
+      "em": 0.0
+    },
+    "Revenue/Profit Sharing": {
+      "n": 19,
+      "f1": 0.08066926608192458,
+      "em": 0.0
+    },
+    "License Grant": {
+      "n": 27,
+      "f1": 0.20541548541933435,
+      "em": 0.07407407407407407
+    },
+    "Affiliate License-Licensee": {
+      "n": 7,
+      "f1": 0.09842479319470297,
+      "em": 0.0
+    },
+    "Post-Termination Services": {
+      "n": 17,
+      "f1": 0.058033171277263415,
+      "em": 0.0
+    },
+    "Audit Rights": {
+      "n": 21,
+      "f1": 0.07601475256021539,
+      "em": 0.0
+    },
+    "Cap On Liability": {
+      "n": 29,
+      "f1": 0.06389788076677134,
+      "em": 0.0
+    },
+    "Non-Compete": {
+      "n": 13,
+      "f1": 0.0775305950289904,
+      "em": 0.0
+    },
+    "Change Of Control": {
+      "n": 13,
+      "f1": 0.051090738665128727,
+      "em": 0.0
+    },
+    "Anti-Assignment": {
+      "n": 39,
+      "f1": 0.07592523399807304,
+      "em": 0.0
+    },
+    "Ip Ownership Assignment": {
+      "n": 12,
+      "f1": 0.08562440564578049,
+      "em": 0.0
+    },
+    "Joint Ip Ownership": {
+      "n": 5,
+      "f1": 0.08627805873480614,
+      "em": 0.0
+    },
+    "Irrevocable Or Perpetual License": {
+      "n": 11,
+      "f1": 0.04542868049566722,
+      "em": 0.0
+    },
+    "Uncapped Liability": {
+      "n": 17,
+      "f1": 0.06830256406243958,
+      "em": 0.0
+    },
+    "Covenant Not To Sue": {
+      "n": 14,
+      "f1": 0.10358718300506,
+      "em": 0.07142857142857142
+    },
+    "Minimum Commitment": {
+      "n": 19,
+      "f1": 0.139260620677251,
+      "em": 0.10526315789473684
+    },
+    "Volume Restriction": {
+      "n": 9,
+      "f1": 0.05606693140549165,
+      "em": 0.0
+    },
+    "Non-Transferable License": {
+      "n": 14,
+      "f1": 0.13793581641542746,
+      "em": 0.0
+    },
+    "Insurance": {
+      "n": 18,
+      "f1": 0.08468863997165996,
+      "em": 0.0
+    },
+    "Rofr/Rofo/Rofn": {
+      "n": 6,
+      "f1": 0.15512187877100156,
+      "em": 0.0
+    },
+    "Warranty Duration": {
+      "n": 8,
+      "f1": 0.08984903395962385,
+      "em": 0.0
+    },
+    "Liquidated Damages": {
+      "n": 4,
+      "f1": 0.05567226890756302,
+      "em": 0.0
+    },
+    "Non-Disparagement": {
+      "n": 5,
+      "f1": 0.17305502846299808,
+      "em": 0.2
+    },
+    "Affiliate License-Licensor": {
+      "n": 3,
+      "f1": 0.1143208056988455,
+      "em": 0.0
+    },
+    "Most Favored Nation": {
+      "n": 1,
+      "f1": 0.02247191011235955,
+      "em": 0.0
+    },
+    "No-Solicit Of Customers": {
+      "n": 2,
+      "f1": 0.03959627329192547,
+      "em": 0.0
+    },
+    "No-Solicit Of Employees": {
+      "n": 7,
+      "f1": 0.041805215718259195,
+      "em": 0.0
+    },
+    "Third Party Beneficiary": {
+      "n": 2,
+      "f1": 0.06428571428571428,
+      "em": 0.0
+    },
+    "Competitive Restriction Exception": {
+      "n": 6,
+      "f1": 0.09092838489752936,
+      "em": 0.0
+    },
+    "Source Code Escrow": {
+      "n": 2,
+      "f1": 0.04730286656287206,
+      "em": 0.0
+    },
+    "Price Restrictions": {
+      "n": 2,
+      "f1": 0.0,
+      "em": 0.0
+    },
+    "Unlimited/All-You-Can-Eat-License": {
+      "n": 1,
+      "f1": 0.6040268456375839,
+      "em": 0.0
+    }
+  },
+  "error_samples": [
+    {
+      "category": "Parties",
+      "question": "Highlight the parts (if any) of this contract related to \"Parties\" that should be reviewed by a lawy",
+      "gold": "TWK",
+      "pred": "New China Media LLC",
+      "has_ans_prob": 1.0,
+      "f1": 0.0
+    },
+    {
+      "category": "Expiration Date",
+      "question": "Highlight the parts (if any) of this contract related to \"Expiration Date\" that should be reviewed b",
+      "gold": "This Agreement and the provisions hereof, except as otherwise provided, shall be in full force and effect commencing on the date of execution by both ",
+      "pred": "TWK Holdings, LLC with offices at Room 4301, 43/F, Jardine House , One Connaught Place, Central, Hong Kong (\"TWK\") (NCM, YGP and TWK shall be individu",
+      "has_ans_prob": 1.0,
+      "f1": 0.145
+    },
+    {
+      "category": "Renewal Term",
+      "question": "Highlight the parts (if any) of this contract related to \"Renewal Term\" that should be reviewed by a",
+      "gold": "This Agreement shall be automatically renewed for additional extended terms each of two (2) years duration unless either party notifies the other in w",
+      "pred": "TWK Holdings, LLC with offices at Room 4301, 43/F, Jardine House , One Connaught Place, Central, Hong Kong (\"TWK\") (NCM, YGP and TWK shall be individu",
+      "has_ans_prob": 1.0,
+      "f1": 0.102
+    },
+    {
+      "category": "Notice Period To Terminate Renewal",
+      "question": "Highlight the parts (if any) of this contract related to \"Notice Period To Terminate Renewal\" that s",
+      "gold": "This Agreement shall be automatically renewed for additional extended terms each of two (2) years duration unless either party notifies the other in w",
+      "pred": "TWK Holdings, LLC with offices at Room 4301, 43/F, Jardine House , One Connaught Place, Central, Hong Kong (\"TWK\") (NCM, YGP and TWK shall be individu",
+      "has_ans_prob": 1.0,
+      "f1": 0.102
+    },
+    {
+      "category": "Governing Law",
+      "question": "Highlight the parts (if any) of this contract related to \"Governing Law\" that should be reviewed by ",
+      "gold": "This Agreement is to be governed by and construed in accordance with the Laws of the State of California applicable to contracts made and to be perfor",
+      "pred": "TWK Holdings, LLC with offices at Room 4301, 43/F, Jardine House , One Connaught Place, Central, Hong Kong (\"TWK\") (NCM, YGP and TWK shall be individu",
+      "has_ans_prob": 1.0,
+      "f1": 0.115
+    },
+    {
+      "category": "Exclusivity",
+      "question": "Highlight the parts (if any) of this contract related to \"Exclusivity\" that should be reviewed by a ",
+      "gold": "In this regard, it is specifically understood and agreed that CONTENT PROVIDER will not during the Term of this Agreement take any action to exploit o",
+      "pred": "TWK Holdings, LLC with offices at Room 4301, 43/F, Jardine House , One Connaught Place, Central, Hong Kong (\"TWK\") (NCM, YGP and TWK shall be individu",
+      "has_ans_prob": 1.0,
+      "f1": 0.113
+    },
+    {
+      "category": "Termination For Convenience",
+      "question": "Highlight the parts (if any) of this contract related to \"Termination For Convenience\" that should b",
+      "gold": "COMPANY may, in its unfettered discretion, terminate this Agreement at any time after first givingCONTENT PROVIDER ten (10) days advance notice thereo",
+      "pred": "TWK Holdings, LLC with offices at Room 4301, 43/F, Jardine House , One Connaught Place, Central, Hong Kong (\"TWK\") (NCM, YGP and TWK shall be individu",
+      "has_ans_prob": 1.0,
+      "f1": 0.088
+    },
+    {
+      "category": "Revenue/Profit Sharing",
+      "question": "Highlight the parts (if any) of this contract related to \"Revenue/Profit Sharing\" that should be rev",
+      "gold": "In consideration for the license of rights granted hereunder in the Current Content, COMPANY hereby agrees to issue to YGP 16,200 shares of its Series",
+      "pred": "TWK Holdings, LLC with offices at Room 4301, 43/F, Jardine House , One Connaught Place, Central, Hong Kong (\"TWK\") (NCM, YGP and TWK shall be individu",
+      "has_ans_prob": 1.0,
+      "f1": 0.104
+    },
+    {
+      "category": "License Grant",
+      "question": "Highlight the parts (if any) of this contract related to \"License Grant\" that should be reviewed by ",
+      "gold": "Subject to the terms and conditions of this Agreement, CONTENT PROVIDER hereby grants and assigns by means of present assignment to COMPANY and COMPAN",
+      "pred": "CONTENT PROVIDER has acquired from one or more third parties (individually a \"Licensor\" and collectively the \"Licensors\") the right to distribute by m",
+      "has_ans_prob": 1.0,
+      "f1": 0.213
+    },
+    {
+      "category": "Affiliate License-Licensee",
+      "question": "Highlight the parts (if any) of this contract related to \"Affiliate License-Licensee\" that should be",
+      "gold": "CONTENT PROVIDER further grants to COMPANY (i) the right to sublicense the Content to COMPANY'S wholly-owned subsidiaries or to joint ventures in whic",
+      "pred": "TWK Holdings, LLC with offices at Room 4301, 43/F, Jardine House , One Connaught Place, Central, Hong Kong (\"TWK\") (NCM, YGP and TWK shall be individu",
+      "has_ans_prob": 1.0,
+      "f1": 0.161
+    },
+    {
+      "category": "Post-Termination Services",
+      "question": "Highlight the parts (if any) of this contract related to \"Post-Termination Services\" that should be ",
+      "gold": "COMPANY'S obligation for the payment of the Net Advertising Revenue shall survive expiration or termination of this Agreement and will continue for as",
+      "pred": "TWK Holdings, LLC with offices at Room 4301, 43/F, Jardine House , One Connaught Place, Central, Hong Kong (\"TWK\") (NCM, YGP and TWK shall be individu",
+      "has_ans_prob": 1.0,
+      "f1": 0.179
+    },
+    {
+      "category": "Audit Rights",
+      "question": "Highlight the parts (if any) of this contract related to \"Audit Rights\" that should be reviewed by a",
+      "gold": "The Licensors shall have the right, upon reasonable notice, to inspect COMPANY'S books and records and all other documents and material in COMPANY'S p",
+      "pred": "TWK Holdings, LLC with offices at Room 4301, 43/F, Jardine House , One Connaught Place, Central, Hong Kong (\"TWK\") (NCM, YGP and TWK shall be individu",
+      "has_ans_prob": 1.0,
+      "f1": 0.139
+    },
+    {
+      "category": "Cap On Liability",
+      "question": "Highlight the parts (if any) of this contract related to \"Cap On Liability\" that should be reviewed ",
+      "gold": "OR ANY OTHER LEGAL THEORY, IS LIMITED TO, AND SHALL NOT EXCEED $31,200.00.",
+      "pred": ".",
+      "has_ans_prob": 1.0,
+      "f1": 0.0
+    },
+    {
+      "category": "Expiration Date",
+      "question": "Highlight the parts (if any) of this contract related to \"Expiration Date\" that should be reviewed b",
+      "gold": "\"Royalty Term\" means, with respect to sales of a Product in the Territory, the time period beginning on the First Commercial Sale of such Product in t",
+      "pred": "\"Affiliate\" means with respect to any Party, any person or entity controlling, controlled by or under common control with such Party.",
+      "has_ans_prob": 1.0,
+      "f1": 0.164
+    },
+    {
+      "category": "Governing Law",
+      "question": "Highlight the parts (if any) of this contract related to \"Governing Law\" that should be reviewed by ",
+      "gold": "Except as otherwise indicated, in all other respects, the right and obligations of the Parties under this Agreement shall be governed by and construed",
+      "pred": "\"Affiliate",
+      "has_ans_prob": 1.0,
+      "f1": 0.0
+    },
+    {
+      "category": "Non-Compete",
+      "question": "Highlight the parts (if any) of this contract related to \"Non-Compete\" that should be reviewed by a ",
+      "gold": "Green Cross shall pay to MacroGenics a royalty of *** on Net Sales of Competing Products for the Royalty Term.",
+      "pred": "\"Affiliate",
+      "has_ans_prob": 1.0,
+      "f1": 0.0
+    },
+    {
+      "category": "Exclusivity",
+      "question": "Highlight the parts (if any) of this contract related to \"Exclusivity\" that should be reviewed by a ",
+      "gold": "The license granted pursuant to this Section 10.3 shall be non­exclusive in the Territory and exclusive in the rest of the world outside the Territory",
+      "pred": "MacroGenics desires to grant to Green Cross, and Green Cross desires to receive, an exclusive license for all Indications for all pharmaceutical forms",
+      "has_ans_prob": 1.0,
+      "f1": 0.25
+    },
+    {
+      "category": "Change Of Control",
+      "question": "Highlight the parts (if any) of this contract related to \"Change Of Control\" that should be reviewed",
+      "gold": "In the event of a Change in Control involving Green Cross, Green Cross shall provide prompt written notice to MacroGenics following such Change in Con",
+      "pred": "Unless",
+      "has_ans_prob": 1.0,
+      "f1": 0.0
+    },
+    {
+      "category": "Anti-Assignment",
+      "question": "Highlight the parts (if any) of this contract related to \"Anti-Assignment\" that should be reviewed b",
+      "gold": "Neither Party may assign its rights and obligations under this Agreement without the prior written consent of the other Party, provided that either Pa",
+      "pred": "\"Affiliate",
+      "has_ans_prob": 1.0,
+      "f1": 0.023
+    },
+    {
+      "category": "Revenue/Profit Sharing",
+      "question": "Highlight the parts (if any) of this contract related to \"Revenue/Profit Sharing\" that should be rev",
+      "gold": "Green Cross shall pay to MacroGenics a royalty of *** on Net Sales of Competing Products for the Royalty Term.",
+      "pred": "Green Cross Corp., a Korean company with a place of business at 303 Bojeong­Dong, Giheung­Gu, Yongin, 446­770, Korea (\"Green Cross\"). MacroGenics and ",
+      "has_ans_prob": 1.0,
+      "f1": 0.246
+    }
+  ]
+}
