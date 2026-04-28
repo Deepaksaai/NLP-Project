@@ -138,7 +138,7 @@ def get_variants(question):
     return variants[:3]
 
 
-def answer_question(model, tokenizer, question, retriever, device, predict_span_fn, top_k=3):
+def answer_question(model, tokenizer, question, retriever, device, predict_span_fn, top_k=5):
     variants = get_variants(question)
     if len(variants) > 1:
         print(f"   [expanding — {len(variants)} variants]")
@@ -186,7 +186,7 @@ def main():
     parser.add_argument("--pdf",      type=str, required=True)
     parser.add_argument("--question", type=str, default=None)
     parser.add_argument("--use_old",  action="store_true")
-    parser.add_argument("--top_k",    type=int, default=3)
+    parser.add_argument("--top_k",    type=int, default=5)
     args = parser.parse_args()
 
     if args.use_old:
